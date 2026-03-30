@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- CACHE BUSTER ID: 99912388 -->
-  <title>!!! UPDATED NAVBAR VERSION 2 !!!</title>
+  <title>Eagle Eye Business Services</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap"
@@ -141,17 +141,31 @@
     /* ── HERO ────────────────────────────────────────── */
     .hero {
       min-height: 100vh;
-      background:
-        linear-gradient(135deg, rgba(13, 27, 62, 0.88) 0%, rgba(26, 58, 107, 0.75) 100%),
-        url('https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+      position: relative;
       display: flex;
       align-items: center;
       padding: 120px 6% 80px;
+      overflow: hidden;
+    }
+    .hero-video {
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      object-fit: cover;
+      z-index: 0;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: linear-gradient(135deg, rgba(13, 27, 62, 0.88) 0%, rgba(26, 58, 107, 0.78) 100%);
+      z-index: 1;
     }
 
     .hero-content {
       max-width: 800px;
       color: var(--white);
+      position: relative;
+      z-index: 2;
     }
 
     .hero-badge {
@@ -629,6 +643,10 @@
 
   <!-- ── HERO ───────────────────────────────────────────── -->
   <section class="hero" id="home">
+    <video class="hero-video" autoplay muted loop playsinline poster="https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1600&q=80">
+      <source src="https://cdn.pixabay.com/video/2016/09/07/5004-183365261_large.mp4" type="video/mp4">
+      <source src="https://cdn.pixabay.com/video/2020/02/07/32092-390602498_large.mp4" type="video/mp4">
+    </video>
     <div class="hero-content">
       <div class="hero-badge"><i class="fa-solid fa-star"></i> Chartered Accountancy Services</div>
       <h1>Eagle Eye <span class="accent">Business</span> Services</h1>
