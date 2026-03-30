@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Eagle Eye Business Services</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:   #0d1b3e;
+      --blue:   #1a3a6b;
+      --gold:   #c9a227;
+      --gold-lt:#f0c84a;
+      --light:  #f4f7fc;
+      --white:  #ffffff;
+      --text:   #2d3748;
+      --muted:  #718096;
+      --radius: 12px;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: 80px;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text);
+      background: var(--white);
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    /* ── ANIMATIONS ──────────────────────────────────── */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .reveal.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── NAV ─────────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 6%; height: 72px;
+      background: rgba(13,27,62,0.96);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none;
+    }
+    .nav-logo .logo-icon {
+      width: 42px; height: 42px; border-radius: 8px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-lt));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; color: var(--navy);
+    }
+    .nav-logo .logo-text { line-height: 1.2; }
+    .nav-logo .logo-text span:first-child {
+      display: block; font-size: 15px; font-weight: 700;
+      color: var(--white); letter-spacing: 0.3px;
+    }
+    .nav-logo .logo-text span:last-child {
+      font-size: 11px; color: var(--gold); letter-spacing: 1px; text-transform: uppercase;
+    }
+    .nav-links {
+      display: flex; gap: 32px; list-style: none;
+    }
+    .nav-links a {
+      color: rgba(255,255,255,0.8); text-decoration: none;
+      font-size: 14px; font-weight: 500;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--gold-lt); }
+    .nav-cta {
+      background: linear-gradient(135deg, var(--gold), var(--gold-lt));
+      color: var(--navy) !important; font-weight: 700 !important;
+      padding: 8px 20px; border-radius: 6px;
+    }
+    .nav-cta:hover { opacity: .9; color: var(--navy) !important; }
+
+    /* hamburger */
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; }
+    .hamburger span { width: 24px; height: 2px; background: #fff; border-radius: 2px; transition: .3s; }
+    .mobile-menu {
+      display: none; position: fixed; top: 72px; left: 0; right: 0; z-index: 999;
+      background: var(--navy); padding: 24px 6%;
+      flex-direction: column; gap: 20px;
+    }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a {
+      color: rgba(255,255,255,0.85); text-decoration: none;
+      font-size: 16px; font-weight: 500; padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    /* ── HERO ────────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      background:
+        linear-gradient(135deg, rgba(13,27,62,0.88) 0%, rgba(26,58,107,0.75) 100%),
+        url('https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+      display: flex; align-items: center;
+      padding: 120px 6% 80px;
+    }
+    .hero-content { max-width: 680px; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(201,162,39,0.15); border: 1px solid rgba(201,162,39,0.4);
+      color: var(--gold-lt); font-size: 12px; font-weight: 600;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      padding: 6px 14px; border-radius: 20px; margin-bottom: 28px;
+    }
+    .hero h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2.4rem, 5vw, 3.8rem);
+      line-height: 1.18; color: var(--white);
+      margin-bottom: 22px;
+    }
+    .hero h1 .accent { color: var(--gold-lt); }
+    .hero p {
+      font-size: 17px; line-height: 1.75;
+      color: rgba(255,255,255,0.78);
+      margin-bottom: 16px;
+    }
+    .hero-location {
+      display: flex; align-items: center; gap: 8px;
+      color: rgba(255,255,255,0.55); font-size: 13.5px;
+      margin-bottom: 40px;
+    }
+    .hero-location i { color: var(--gold); }
+    .hero-btns { display: flex; gap: 16px; flex-wrap: wrap; }
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: linear-gradient(135deg, var(--gold), var(--gold-lt));
+      color: var(--navy); font-weight: 700; font-size: 15px;
+      padding: 14px 28px; border-radius: 8px; text-decoration: none;
+      transition: transform .2s, box-shadow .2s;
+      box-shadow: 0 4px 20px rgba(201,162,39,0.4);
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(201,162,39,0.5); }
+    .btn-outline {
+      display: inline-flex; align-items: center; gap: 8px;
+      border: 2px solid rgba(255,255,255,0.4); color: var(--white);
+      font-weight: 600; font-size: 15px;
+      padding: 13px 28px; border-radius: 8px; text-decoration: none;
+      transition: border-color .2s, background .2s;
+    }
+    .btn-outline:hover { border-color: var(--gold); background: rgba(201,162,39,0.1); }
+
+    .divider {
+      width: 56px; height: 4px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-lt));
+      border-radius: 2px; margin: 18px 0 0;
+    }
+
+    /* ── STATS SECTION ──────────────────────────────── */
+    .stats-section {
+      padding: 60px 6%;
+      background: var(--navy);
+      color: var(--white);
+      text-align: center;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 40px;
+      max-width: 1200px; margin: 0 auto;
+    }
+    .stat-item h2 {
+      font-size: 42px; font-weight: 800; color: var(--gold-lt);
+      margin-bottom: 8px;
+    }
+    .stat-item p {
+      font-size: 14px; text-transform: uppercase; letter-spacing: 1px;
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* ── SERVICES ────────────────────────────────────── */
+    #services { background: var(--light); }
+    .services-header { text-align: center; margin-bottom: 60px; }
+    .services-header .divider { margin: 18px auto 0; }
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 28px;
+    }
+    .service-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 36px 30px;
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+      transition: transform .25s, box-shadow .25s;
+      position: relative; overflow: hidden;
+    }
+    .service-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--gold), var(--gold-lt));
+      opacity: 0; transition: opacity .25s;
+    }
+    .service-card:hover { transform: translateY(-6px); box-shadow: 0 12px 36px rgba(0,0,0,0.12); }
+    .service-card:hover::before { opacity: 1; }
+    .service-icon {
+      width: 58px; height: 58px; border-radius: 14px;
+      background: linear-gradient(135deg, #e8eef9, #d0dcf5);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 24px; color: var(--blue);
+      margin-bottom: 22px; transition: background .25s;
+    }
+    .service-card:hover .service-icon {
+      background: linear-gradient(135deg, var(--gold), var(--gold-lt));
+      color: var(--navy);
+    }
+    .service-card h3 {
+      font-size: 17px; font-weight: 700; color: var(--navy);
+      margin-bottom: 10px;
+    }
+    .service-card p { font-size: 14px; color: var(--muted); line-height: 1.7; }
+
+    /* ── TRUSTED BY ─────────────────────────────────── */
+    .trusted-by {
+      background: var(--white); padding: 40px 6%; text-align: center;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    .trusted-grid {
+      display: flex; justify-content: center; align-items: center;
+      gap: 60px; flex-wrap: wrap; opacity: 0.6; filter: grayscale(1);
+    }
+    .trusted-logo { font-size: 18px; font-weight: 700; color: var(--navy); display: flex; align-items: center; gap: 8px; }
+    .trusted-logo i { font-size: 24px; color: var(--gold); }
+
+    /* ── PRICING ─────────────────────────────────────── */
+    #pricing { background: var(--white); }
+    .pricing-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px; margin-top: 50px;
+    }
+    .pricing-card {
+      border: 1px solid #e2e8f0; border-radius: 20px; padding: 40px;
+      text-align: center; transition: all .3s; position: relative;
+    }
+    .pricing-card.featured {
+      border: 2px solid var(--gold); transform: scale(1.05);
+      box-shadow: 0 20px 40px rgba(201,162,39,0.1);
+    }
+    .pricing-card:hover { border-color: var(--gold); transform: translateY(-5px); }
+    .pricing-card h3 { font-size: 20px; color: var(--navy); margin-bottom: 15px; }
+    .pricing-price { font-size: 36px; font-weight: 800; color: var(--navy); margin-bottom: 25px; }
+    .pricing-price span { font-size: 16px; font-weight: 400; color: var(--muted); }
+    .pricing-features { list-style: none; margin-bottom: 35px; text-align: left; }
+    .pricing-features li { margin-bottom: 12px; font-size: 15px; color: var(--text); display: flex; align-items: center; gap: 10px; }
+    .pricing-features i { color: #48bb78; }
+    .badge-popular {
+      position: absolute; top: 0; left: 50%; transform: translate(-50%, -50%);
+      background: var(--gold); color: var(--navy); font-weight: 800;
+      padding: 6px 18px; border-radius: 20px; font-size: 12px;
+    }
+    .feature-item p { font-size: 15px; color: var(--text); line-height: 1.6; font-weight: 500; }
+
+    /* ── TESTIMONIALS ────────────────────────────────── */
+    #testimonials { background: var(--light); position: relative; overflow: hidden; }
+    #testimonials::before {
+      content: '"'; position: absolute; top: -40px; right: 5%;
+      font-size: 240px; color: rgba(201,162,39,0.05);
+      font-family: 'Playfair Display', serif;
+    }
+    .testi-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 30px; margin-top: 50px;
+    }
+    .testi-card {
+      background: var(--white); padding: 40px; border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      position: relative; transition: transform .3s;
+    }
+    .testi-card:hover { transform: translateY(-8px); }
+    .testi-stars { color: var(--gold); margin-bottom: 15px; font-size: 14px; }
+    .testi-text { font-style: italic; color: var(--text); line-height: 1.8; margin-bottom: 25px; }
+    .testi-author { display: flex; align-items: center; gap: 15px; }
+    .testi-author img { width: 50px; height: 50px; border-radius: 50%; object-fit: cover; }
+    .testi-author h4 { font-size: 16px; color: var(--navy); margin-bottom: 2px; }
+    .testi-author p { font-size: 13px; color: var(--muted); }
+
+    /* ── FAQ ─────────────────────────────────────────── */
+    .faq-container { max-width: 800px; margin: 40px auto 0; }
+    .faq-item {
+      background: var(--white); border-radius: 12px; margin-bottom: 12px;
+      border: 1px solid rgba(0,0,0,0.05); overflow: hidden;
+    }
+    .faq-question {
+      width: 100%; padding: 20px 25px; text-align: left;
+      background: none; border: none; outline: none;
+      display: flex; justify-content: space-between; align-items: center;
+      cursor: pointer; font-family: inherit; font-weight: 600;
+      color: var(--navy); transition: background .2s;
+    }
+    .faq-question:hover { background: rgba(26,58,107,0.02); }
+    .faq-question i { transition: transform .3s; color: var(--gold); }
+    .faq-answer {
+      max-height: 0; overflow: hidden; transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      padding: 0 25px; color: var(--muted); font-size: 15px; line-height: 1.7;
+    }
+    .faq-item.active .faq-answer { max-height: 200px; padding-bottom: 20px; }
+    .faq-item.active .faq-question i { transform: rotate(180deg); }
+
+    /* ── CONTACT ─────────────────────────────────────── */
+    #contact { background: var(--light); }
+    .contact-header { text-align: center; margin-bottom: 60px; }
+    .contact-header .divider { margin: 18px auto 0; }
+    .contact-grid {
+      display: grid; grid-template-columns: 1fr 1.2fr;
+      gap: 48px; align-items: start;
+    }
+    .contact-cards { display: flex; flex-direction: column; gap: 20px; }
+    .contact-card {
+      background: var(--white);
+      border-radius: var(--radius); padding: 26px 28px;
+      display: flex; gap: 18px; align-items: flex-start;
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+      transition: box-shadow .2s;
+    }
+    .contact-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.1); }
+    .contact-card-icon {
+      flex-shrink: 0; width: 48px; height: 48px; border-radius: 12px;
+      background: linear-gradient(135deg, var(--navy), var(--blue));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; color: var(--gold-lt);
+    }
+    .contact-card-body h4 { font-size: 14px; font-weight: 700; color: var(--navy); margin-bottom: 6px; }
+    .contact-card-body p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+    .contact-card-body a {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 13px; font-weight: 600; color: var(--gold);
+      text-decoration: none; margin-top: 8px;
+      transition: color .2s;
+    }
+    .contact-card-body a:hover { color: var(--navy); }
+
+    /* form */
+    .contact-form-wrap {
+      background: var(--white); border-radius: var(--radius);
+      padding: 40px 36px;
+      border: 1px solid rgba(0,0,0,0.06);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+    }
+    .contact-form-wrap h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px; color: var(--navy); margin-bottom: 28px;
+    }
+    .form-group { margin-bottom: 20px; }
+    .form-group label {
+      display: block; font-size: 13px; font-weight: 600;
+      color: var(--navy); margin-bottom: 7px;
+    }
+    .form-group input,
+    .form-group textarea {
+      width: 100%; padding: 12px 16px;
+      border: 1.5px solid #e2e8f0; border-radius: 8px;
+      font-family: inherit; font-size: 14px; color: var(--text);
+      outline: none; transition: border-color .2s, box-shadow .2s;
+      resize: none;
+    }
+    .form-group input:focus,
+    .form-group textarea:focus {
+      border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,162,39,0.12);
+    }
+    .form-group textarea { height: 120px; }
+    .btn-submit {
+      width: 100%; padding: 14px;
+      background: linear-gradient(135deg, var(--navy), var(--blue));
+      color: var(--white); font-size: 15px; font-weight: 700;
+      border: none; border-radius: 8px; cursor: pointer;
+      transition: opacity .2s, transform .2s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .btn-submit:hover { opacity: .9; transform: translateY(-1px); }
+    #form-success {
+      display: none; text-align: center; padding: 20px;
+      color: #276749; font-weight: 600; font-size: 15px;
+      background: #f0fff4; border-radius: 8px; margin-top: 16px;
+    }
+
+    /* ── FOOTER ──────────────────────────────────────── */
+    footer {
+      background: var(--navy); padding: 48px 6% 28px;
+      color: rgba(255,255,255,0.7);
+    }
+    .footer-top {
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 24px; padding-bottom: 32px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .footer-brand .logo-text span:first-child { color: var(--white) !important; }
+    .footer-links { display: flex; gap: 28px; flex-wrap: wrap; }
+    .footer-links a {
+      color: rgba(255,255,255,0.6); text-decoration: none;
+      font-size: 13.5px; transition: color .2s;
+    }
+    .footer-links a:hover { color: var(--gold-lt); }
+    .footer-bottom {
+      padding-top: 24px; font-size: 13px;
+      display: flex; justify-content: space-between; align-items: center;
+      flex-wrap: wrap; gap: 12px;
+    }
+    .footer-bottom span { color: var(--gold); font-weight: 600; }
+
+    /* ── FLOATING BUTTONS ────────────────────────────── */
+    .float-btns {
+      position: fixed; bottom: 28px; right: 24px; z-index: 999;
+      display: flex; flex-direction: column; gap: 12px; align-items: flex-end;
+    }
+    .float-btn {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 20px; border-radius: 50px;
+      text-decoration: none; font-size: 14px; font-weight: 700;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+      transition: transform .2s, box-shadow .2s;
+      white-space: nowrap;
+    }
+    .float-btn:hover { transform: translateY(-3px); box-shadow: 0 10px 28px rgba(0,0,0,0.28); }
+    .float-wa  { background: #25d366; color: #fff; }
+    .float-tel { background: var(--gold); color: var(--navy); }
+
+    /* ── RESPONSIVE ──────────────────────────────────── */
+    @media (max-width: 900px) {
+      nav .nav-links { display: none; }
+      .hamburger { display: flex; }
+      #about { grid-template-columns: 1fr; gap: 40px; }
+      .contact-grid { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 600px) {
+      section { padding: 64px 5%; }
+      .hero { padding: 110px 5% 64px; }
+      .float-btn .btn-label { display: none; }
+      .float-btn { padding: 14px; border-radius: 50%; }
+      .float-btn i { font-size: 18px; }
+      .footer-top { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAVBAR ─────────────────────────────────────────── -->
+<nav>
+  <a href="#" class="nav-logo">
+    <div class="logo-icon"><i class="fa-solid fa-eye"></i></div>
+    <div class="logo-text">
+      <span>Eagle Eye</span>
+      <span>Business Services</span>
+    </div>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="tel:+917276216751" class="nav-cta"><i class="fa-solid fa-phone"></i> Call Us</a></li>
+  </ul>
+  <button class="hamburger" id="menuBtn" aria-label="Toggle menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- mobile menu -->
+<div class="mobile-menu" id="mobileMenu">
+  <a href="#services" onclick="closeMobile()">Services</a>
+  <a href="#pricing"  onclick="closeMobile()">Pricing</a>
+  <a href="#about"    onclick="closeMobile()">About</a>
+  <a href="#contact"  onclick="closeMobile()">Contact</a>
+  <a href="tel:+917276216751"><i class="fa-solid fa-phone"></i> Call Us</a>
+</div>
+
+<!-- ── HERO ───────────────────────────────────────────── -->
+<section class="hero" id="home">
+  <div class="hero-content">
+    <div class="hero-badge"><i class="fa-solid fa-star"></i> Chartered Accountancy Services</div>
+    <h1>Eagle Eye <span class="accent">Business</span> Services</h1>
+    <p>Expert financial guidance and accounting solutions for businesses of all sizes. Your trusted partner in growth.</p>
+    <div class="hero-location">
+      <i class="fa-solid fa-location-dot"></i>
+      Keshav Nagar, Hadapsar, Pune, Maharashtra
+    </div>
+    <div class="hero-btns">
+      <a href="#contact" class="btn-primary"><i class="fa-solid fa-calendar-check"></i> Free Consultation</a>
+      <a href="#services" class="btn-outline"><i class="fa-solid fa-list"></i> Our Services</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── TRUSTED BY ticker ────────────────────────────── -->
+<div class="trusted-by">
+  <div class="trusted-grid reveal">
+    <div class="trusted-logo"><i class="fa-solid fa-briefcase"></i> FinCorp</div>
+    <div class="trusted-logo"><i class="fa-solid fa-seedling"></i> AgroTech</div>
+    <div class="trusted-logo"><i class="fa-solid fa-bolt"></i> SparkEnergy</div>
+    <div class="trusted-logo"><i class="fa-solid fa-plane"></i> SkyWays</div>
+    <div class="trusted-logo"><i class="fa-solid fa-shield-halved"></i> GuardSafe</div>
+  </div>
+</div>
+
+<!-- ── STATS SECTION ────────────────────────────────── -->
+<section class="stats-section">
+  <div class="stats-grid reveal">
+    <div class="stat-item">
+      <h2>10+</h2>
+      <p>Years Experience</p>
+    </div>
+    <div class="stat-item">
+      <h2>500+</h2>
+      <p>Satisfied Clients</p>
+    </div>
+    <div class="stat-item">
+      <h2>100%</h2>
+      <p>Compliance Rate</p>
+    </div>
+    <div class="stat-item">
+      <h2>24/7</h2>
+      <p>Expert Support</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── SERVICES ───────────────────────────────────────── -->
+<section id="services">
+  <div class="services-header reveal">
+    <span class="section-label">What We Offer</span>
+    <h2 class="section-title">Our Services</h2>
+    <p class="section-sub" style="margin:0 auto;">Professional chartered accountancy services designed to keep your business financially healthy and compliant.</p>
+    <div class="divider"></div>
+  </div>
+  <div class="services-grid reveal">
+
+    <div class="service-card">
+      <div class="service-icon"><i class="fa-solid fa-book-open"></i></div>
+      <h3>Accounting &amp; Bookkeeping</h3>
+      <p>Comprehensive financial record-keeping and reporting tailored for your business needs.</p>
+    </div>
+
+    <div class="service-card">
+      <div class="service-icon"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+      <h3>Tax Planning &amp; Filing</h3>
+      <p>Strategic tax advisory and timely filing services to maximize savings and compliance.</p>
+    </div>
+
+    <div class="service-card">
+      <div class="service-icon"><i class="fa-solid fa-chart-line"></i></div>
+      <h3>Business Advisory</h3>
+      <p>Insightful financial strategies to drive growth, optimize costs, and improve profitability.</p>
+    </div>
+
+    <div class="service-card">
+      <div class="service-icon"><i class="fa-solid fa-magnifying-glass-chart"></i></div>
+      <h3>Audit &amp; Assurance</h3>
+      <p>Thorough audit services ensuring transparency and regulatory compliance for your business.</p>
+    </div>
+
+    <div class="service-card">
+      <div class="service-icon"><i class="fa-solid fa-building-columns"></i></div>
+      <h3>Company Registration</h3>
+      <p>End-to-end assistance with business formation, GST registration, and legal structuring.</p>
+    </div>
+
+    <div class="service-card">
+      <div class="service-icon"><i class="fa-solid fa-users"></i></div>
+      <h3>Payroll Management</h3>
+      <p>Hassle-free payroll processing, compliance, and employee tax management solutions.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── PRICING ───────────────────────────────────────── -->
+<section id="pricing">
+  <div class="services-header reveal">
+    <span class="section-label">Investment</span>
+    <h2 class="section-title">Transparent Pricing</h2>
+    <p class="section-sub" style="margin:0 auto;">Choose the right plan for your business growth. No hidden fees, ever.</p>
+    <div class="divider"></div>
+  </div>
+  <div class="pricing-grid reveal">
+    <div class="pricing-card">
+      <h3>Starter</h3>
+      <div class="pricing-price">₹1,999<span>/mo</span></div>
+      <ul class="pricing-features">
+        <li><i class="fa-solid fa-check"></i> Basic Bookkeeping</li>
+        <li><i class="fa-solid fa-check"></i> GST Filing (Monthly)</li>
+        <li><i class="fa-solid fa-check"></i> Email Support</li>
+        <li><i class="fa-solid fa-check"></i> Quarterly Financial Review</li>
+      </ul>
+      <a href="#contact" class="btn-submit" style="text-decoration:none;">Get Started</a>
+    </div>
+    <div class="pricing-card featured">
+      <div class="badge-popular">MOST POPULAR</div>
+      <h3>Professional</h3>
+      <div class="pricing-price">₹4,999<span>/mo</span></div>
+      <ul class="pricing-features">
+        <li><i class="fa-solid fa-check"></i> Full Bookkeeping & Payroll</li>
+        <li><i class="fa-solid fa-check"></i> Tax Planning & Compliance</li>
+        <li><i class="fa-solid fa-check"></i> Priority Phone Support</li>
+        <li><i class="fa-solid fa-check"></i> Monthly Strategy Session</li>
+      </ul>
+      <a href="#contact" class="btn-primary" style="text-decoration:none; width:100%; justify-content:center;">Go Professional</a>
+    </div>
+    <div class="pricing-card">
+      <h3>Enterprise</h3>
+      <div class="pricing-price">₹9,999<span>/mo</span></div>
+      <ul class="pricing-features">
+        <li><i class="fa-solid fa-check"></i> Custom Financial Advisory</li>
+        <li><i class="fa-solid fa-check"></i> Dedicated CA Assistant</li>
+        <li><i class="fa-solid fa-check"></i> Investor Readiness Reports</li>
+        <li><i class="fa-solid fa-check"></i> Unlimited Consultations</li>
+      </ul>
+      <a href="#contact" class="btn-submit" style="text-decoration:none;">Contact Us</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── ABOUT ──────────────────────────────────────────── -->
+<section id="about" class="reveal">
+  <div class="about-img">
+    <img src="https://images.unsplash.com/photo-1611532736597-de2d4265fba3?auto=format&fit=crop&w=900&q=80" alt="Financial growth" />
+    <div class="badge-float">
+      <div class="big">10+</div>
+      <div class="sm">Years of Expertise</div>
+    </div>
+  </div>
+  <div class="about-text">
+    <span class="section-label">About Us</span>
+    <h2 class="section-title">Your Trusted Financial Partner in Pune</h2>
+    <div class="divider" style="margin-bottom:22px;"></div>
+    <p style="font-size:15.5px;line-height:1.8;color:var(--muted);">
+      At Eagle Eye Business Services, we bring clarity and precision to your financial world. Based in Keshav Nagar, Hadapsar, Pune, we provide comprehensive chartered accountancy services designed to help businesses thrive.
+    </p>
+    <p style="font-size:15.5px;line-height:1.8;color:var(--muted);margin-top:14px;">
+      Our team of experienced professionals is committed to delivering personalized solutions that align with your business goals, ensuring compliance and maximizing your financial potential.
+    </p>
+    <div class="features">
+      <div class="feature-item">
+        <div class="feature-icon"><i class="fa-solid fa-check"></i></div>
+        <p>Experienced Chartered Accountants</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon"><i class="fa-solid fa-check"></i></div>
+        <p>Personalized financial strategies</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon"><i class="fa-solid fa-check"></i></div>
+        <p>Full regulatory compliance support</p>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon"><i class="fa-solid fa-check"></i></div>
+        <p>Transparent and timely communication</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TESTIMONIALS ──────────────────────────────────── -->
+<section id="testimonials">
+  <div class="services-header reveal">
+    <span class="section-label">Success Stories</span>
+    <h2 class="section-title">What Our Clients Say</h2>
+    <p class="section-sub" style="margin:0 auto;">Don't just take our word for it—hear from the businesses we've helped reach new heights.</p>
+    <div class="divider"></div>
+  </div>
+  <div class="testi-grid reveal">
+    <div class="testi-card">
+      <div class="testi-stars">
+        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+      </div>
+      <p class="testi-text">"Eagle Eye Business Services transformed how we handle our taxes. Their expertise is unmatched in Pune."</p>
+      <div class="testi-author">
+        <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80" alt="Client 1" />
+        <div>
+          <h4>Amit Patel</h4>
+          <p>Founder, TechGlobal Sols</p>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">
+        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+      </div>
+      <p class="testi-text">"Reliable, professional, and always available. They helped us register our company effortlessly."</p>
+      <div class="testi-author">
+        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80" alt="Client 2" />
+        <div>
+          <h4>Priya Sharma</h4>
+          <p>MD, Zenith Retail</p>
+        </div>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">
+        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+      </div>
+      <p class="testi-text">"Their business advisory services helped us cut costs by 20% in just one year. Highly recommended!"</p>
+      <div class="testi-author">
+        <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&w=100&q=80" alt="Client 3" />
+        <div>
+          <h4>Vikram Rao</h4>
+          <p>CEO, Rao Logistics</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ SECTION ───────────────────────────────────── -->
+<section id="faq">
+  <div class="services-header reveal">
+    <span class="section-label">Questions</span>
+    <h2 class="section-title">Frequently Asked Questions</h2>
+    <div class="divider"></div>
+  </div>
+  <div class="faq-container reveal">
+    <div class="faq-item">
+      <button class="faq-question">What documents do I need for GST registration? <i class="fa-solid fa-chevron-down"></i></button>
+      <div class="faq-answer">For GST registration, you typically need PAN card, Aadhaar card, proof of business address (like electricity bill or rent agreement), and bank account details.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question">How often should I review my company's finances? <i class="fa-solid fa-chevron-down"></i></button>
+      <div class="faq-answer">We recommend a monthly review to stay updated on cash flow, but a comprehensive quarterly review is essential for strategic planning and tax optimization.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question">Can you help with startup funding audits? <i class="fa-solid fa-chevron-down"></i></button>
+      <div class="faq-answer">Yes, we specialize in providing audit reports and financial valuations that are essential for startups seeking investor funding.</div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-question">What are your working hours? <i class="fa-solid fa-chevron-down"></i></button>
+      <div class="faq-answer">Our office is open from Monday to Saturday, 10:00 AM to 7:00 PM. However, we are available for emergency consultations for our gold clients 24/7.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ────────────────────────────────────────── -->
+<section id="contact" class="reveal">
+  <div class="contact-header">
+    <span class="section-label">Get In Touch</span>
+    <h2 class="section-title">Contact Us</h2>
+    <p class="section-sub" style="margin:0 auto;">Ready to take control of your finances? Reach out today for a free consultation.</p>
+    <div class="divider"></div>
+  </div>
+  <div class="contact-grid">
+    <div class="contact-cards">
+
+      <div class="contact-card">
+        <div class="contact-card-icon"><i class="fa-solid fa-phone"></i></div>
+        <div class="contact-card-body">
+          <h4>Phone</h4>
+          <p>+91 72762 16751</p>
+          <a href="tel:+917276216751">Call Now <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+      <div class="contact-card">
+        <div class="contact-card-icon"><i class="fa-brands fa-whatsapp"></i></div>
+        <div class="contact-card-body">
+          <h4>WhatsApp</h4>
+          <p>+91 72762 16751</p>
+          <a href="https://wa.me/917276216751" target="_blank" rel="noopener">Message Us <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+      <div class="contact-card">
+        <div class="contact-card-icon"><i class="fa-solid fa-location-dot"></i></div>
+        <div class="contact-card-body">
+          <h4>Address</h4>
+          <p>Flat No 905, C-Wing, Sancheti Eves Garden Society, opp. Orbis School, Keshav Nagar, Hadapsar, Pune 411036</p>
+          <a href="https://www.google.com/maps/search/?api=1&query=Eagle%20Eye%20Business%20Services%20Keshav%20Nagar%20Pune" target="_blank" rel="noopener">Get Directions <i class="fa-solid fa-arrow-right"></i></a>
+        </div>
+      </div>
+
+      <div class="contact-card">
+        <div class="contact-card-icon"><i class="fa-solid fa-clock"></i></div>
+        <div class="contact-card-body">
+          <h4>Working Hours</h4>
+          <p>Monday – Saturday<br>10:00 AM – 7:00 PM</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- FORM -->
+    <div class="contact-form-wrap">
+      <h3>Send a Message</h3>
+      <form id="contactForm" onsubmit="handleSubmit(event)">
+        <div class="form-group">
+          <label for="name">Your Name</label>
+          <input type="text" id="name" placeholder="e.g. Rahul Sharma" required />
+        </div>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input type="email" id="email" placeholder="you@example.com" required />
+        </div>
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input type="tel" id="phone" placeholder="+91 XXXXX XXXXX" />
+        </div>
+        <div class="form-group">
+          <label for="message">Message</label>
+          <textarea id="message" placeholder="How can we help you?" required></textarea>
+        </div>
+        <button type="submit" class="btn-submit">
+          <i class="fa-solid fa-paper-plane"></i> Send Message
+        </button>
+      </form>
+      <div id="form-success">
+        <i class="fa-solid fa-circle-check" style="font-size:22px;display:block;margin-bottom:8px;color:#48bb78;"></i>
+        Thank you! We'll get back to you shortly.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────── -->
+<footer>
+  <div class="footer-top">
+    <a href="#" class="nav-logo footer-brand">
+      <div class="logo-icon"><i class="fa-solid fa-eye"></i></div>
+      <div class="logo-text">
+        <span>Eagle Eye</span>
+        <span>Business Services</span>
+      </div>
+    </a>
+    <nav class="footer-links">
+      <a href="#services">Services</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
+      <a href="tel:+917276216751">Call Us</a>
+    </nav>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 <span>Eagle Eye Business Services</span>. All rights reserved.</p>
+    <p>Keshav Nagar, Hadapsar, Pune 411036</p>
+  </div>
+</footer>
+
+<!-- ── FLOATING BUTTONS ───────────────────────────────── -->
+<div class="float-btns">
+  <a href="https://wa.me/917276216751" target="_blank" rel="noopener" class="float-btn float-wa">
+    <i class="fa-brands fa-whatsapp"></i><span class="btn-label">Chat on WhatsApp</span>
+  </a>
+  <a href="tel:+917276216751" class="float-btn float-tel">
+    <i class="fa-solid fa-phone"></i><span class="btn-label">Call Eagle Eye</span>
+  </a>
+</div>
+
+<script>
+  // mobile menu
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('open'));
+  function closeMobile() { mobileMenu.classList.remove('open'); }
+
+  // smooth scroll close
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', () => { closeMobile(); });
+  });
+
+  // contact form
+  function handleSubmit(e) {
+    e.preventDefault();
+    const form = document.getElementById('contactForm');
+    const success = document.getElementById('form-success');
+    form.style.display = 'none';
+    success.style.display = 'block';
+  }
+
+  // nav shadow on scroll
+  window.addEventListener('scroll', () => {
+    document.querySelector('nav').style.boxShadow =
+      window.scrollY > 40 ? '0 4px 30px rgba(0,0,0,0.4)' : '0 2px 20px rgba(0,0,0,0.3)';
+    reveal();
+  });
+
+  // Reveal animations
+  function reveal() {
+    const reveals = document.querySelectorAll(".reveal");
+    reveals.forEach(el => {
+      const windowHeight = window.innerHeight;
+      const elementTop = el.getBoundingClientRect().top;
+      const elementVisible = 150;
+      if (elementTop < windowHeight - elementVisible) {
+        el.classList.add("active");
+      }
+    });
+  }
+  window.addEventListener("load", reveal);
+
+  // FAQ Accordion
+  document.querySelectorAll('.faq-question').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.parentElement;
+      const isActive = item.classList.contains('active');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('active'));
+      if (!isActive) item.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>
